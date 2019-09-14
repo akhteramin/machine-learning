@@ -7,11 +7,12 @@ x=traindata(:,1:8);
 y=traindata(:,9);
 N=length(x);
 K=10;
-ErrTrain=[];
-ErrTest=[];
 meanTestErr=[];
 meanTrainErr=[];
 for p=0:10
+    
+    ErrTrain=[];
+    ErrTest=[];
     for k=1:K
 
         test_start = 1+(k-1)*N/K;
@@ -59,9 +60,6 @@ for p=0:10
         y_test_pred = z_test'*w;
        
         ErrTest=[ErrTest (norm(y_test_pred'-y_test)^2)];
-        
-        
-
     end
     % find mean
     meanTestErr=[meanTestErr sum(ErrTest)/length(ErrTest')];

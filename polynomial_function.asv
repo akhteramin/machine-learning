@@ -1,0 +1,79 @@
+function polynomial_function()
+
+% x = 0:pi/20:2*pi;
+
+traindata=importdata('traindata.txt');
+x=traindata(:,1:8);
+y=traindata(:,9);
+N=length(x);
+K=10;
+ErrTrain=0;
+ErrTest=0;
+meanTestErr=[];
+meanTrainErr=[];
+for p=0:10
+    for k=1:K
+
+        test_start = 1+(k-1)*N/K;
+        test_end   = k*N/K;
+        %Test data definition
+        data_test  = x(test_start:test_end,:)';
+        y_test = y(test_start:test_end,:);
+        %Train data definition
+        data_train = [x(1:test_start-1,:)' x(test_end+1:N,:)'];
+        y_train = [y(1:test_start-1,:)' y(test_end+1:N,:)'];
+        y_train = y_train';
+        
+        %z definition with resect to 
+        z=0;
+        z_test=0;
+        for j=0:p
+            if z==0
+                z=data_train.^j;
+                z_test=data_test.^j;
+            else
+                z=[z;data_train.^j];
+                z_test=[z_test;data_test.^j];
+            end
+        end
+        fprintf("length of z:\n");
+        disp(z);
+        w=z'\y_train;
+        y_train_pred = w'*z; 
+        if ErrTrain==0
+            ErrTrain=(norm(y_train_pred'-y_train)^2);
+        else
+            ErrTrain=[ErrTrain (norm(y_train_pred'-y_train)^2)];
+        end
+        fprintf("data test for p %f\n",p)
+        disp(data_test);
+        
+        fprintf("z test for p %f\n",p)
+        disp(z_test);
+        
+        fprintf("w test for p %f\n",p)
+        disp(w);
+        
+        y_test_pred = z_test'*w;
+        if ErrTest==0
+            ErrTest=(norm(y_test_pred'-y_test)^2);
+        else
+            ErrTest=[ErrTest (norm(y_test_pred'-y_test)^2)];
+        end
+        
+
+    end
+    meanTestErr=[meanTestErr sum(ErrTest)/length(ErrTest')];
+    meanTrainErr=[meanTrainErr sum(ErrTrain)/length(ErrTrain')];
+    %{
+    fprintf("Order %f test error %f train error %f\n",p,meanTestErr,meanTrainErr)
+    figure(1);
+    plot(p,meanTestErr,"b*");
+    plot(p,meanTrainErr,"o");
+    %}
+    
+end
+disp([meanTestErr' meanTrainErr'])
+
+
+

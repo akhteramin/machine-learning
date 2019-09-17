@@ -28,16 +28,12 @@ for p=0:10
         %z definition with resect to different polynomial
         %z_test definition with resect to different polynomial
         
-        z=0;
-        z_test=0;
+        z=[];
+        z_test=[];
         for j=0:p
-            if z==0
-                z=data_train.^j;
-                z_test=data_test.^j;
-            else
-                z=[z;data_train.^j];
-                z_test=[z_test;data_test.^j];
-            end
+            z=[z;data_train.^j];
+            z_test=[z_test;data_test.^j];
+            
         end
         fprintf("length of z:\n");
         disp(z);
@@ -68,6 +64,24 @@ for p=0:10
     
 end
 disp([meanTestErr' meanTrainErr'])
+[M,I]=min(meanTestErr');
+finalP=I-1;
+% Re-fit a polynomial of order p ? to the entire dataset.
+z_final=[];
+for j=0:finalP
+    z_final=[z_final;x'.^j];
+end
 
+w_final=z_final'\y;
+y_final_pred = w_final'*z_final; 
+
+%Re-fit and output it
+ErrFinal=[];
+ErrFinal=[ErrFinal (norm(y_final_pred'-y)^2)];
+        
+disp(ErrFinal)
+
+% Run on test data
+%run on test data buddy
 
 

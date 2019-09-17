@@ -6,7 +6,7 @@ traindata=importdata('traindata.txt');
 x=traindata(:,1:8);
 y=traindata(:,9);
 N=length(x);
-K=10;
+K=926;
 meanTestErr=[];
 meanTrainErr=[];
 for p=0:10
@@ -76,8 +76,7 @@ w_final=z_final'\y;
 y_final_pred = w_final'*z_final; 
 
 %Re-fit and output it
-ErrFinal=[];
-ErrFinal=[ErrFinal (norm(y_final_pred'-y)^2)];
+ErrFinal= (norm(y_final_pred'-y)^2);
         
 disp(ErrFinal)
 

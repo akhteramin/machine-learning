@@ -1,4 +1,4 @@
-function polynomial_function()
+% function polynomial_function()
 
 % x = 0:pi/20:2*pi;
 
@@ -44,14 +44,14 @@ for p=0:10
         %get Training Error here and put that into a vector
         ErrTrain=[ErrTrain (norm(y_train_pred'-y_train)^2)];
         
-        fprintf("data test for p %f\n",p)
-        disp(data_test);
+        %fprintf("data test for p %f\n",p)
+        %disp(data_test);
         
-        fprintf("z test for p %f\n",p)
-        disp(z_test);
+        %fprintf("z test for p %f\n",p)
+        %disp(z_test);
         
-        fprintf("w test for p %f\n",p)
-        disp(w);
+        %fprintf("w test for p %f\n",p)
+        %disp(w);
         %get Y prediction on test data and Test Error here and put that into a vector
         y_test_pred = z_test'*w;
        
@@ -64,8 +64,13 @@ for p=0:10
     
 end
 disp([meanTestErr' meanTrainErr'])
+figure(1);
+plot(meanTestErr','r');
+hold on
+plot(meanTrainErr','g');
+hold off
 [M,I]=min(meanTestErr');
-finalP=I-1;
+finalP=I-1;shash
 % Re-fit a polynomial of order p ? to the entire dataset.
 z_final=[];
 for j=0:finalP
@@ -76,7 +81,7 @@ w_final=z_final'\y;
 y_final_pred = w_final'*z_final; 
 
 %Re-fit and output it
-ErrFinal= (norm(y_final_pred'-y)^2);
+ErrFinal= (norm(y_final_pred'-y)^2)/N;
         
 disp(ErrFinal)
 

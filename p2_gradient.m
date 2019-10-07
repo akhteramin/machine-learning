@@ -9,7 +9,6 @@ if order==2
         g(i)=(f(x+h*e)-f(x-h*e))/2*h;
         
     end
-
 else
     for i=1:N
         e=zeros(N);
@@ -17,4 +16,6 @@ else
         g(i)=(f(x+h*e)-f(x))/h;
     end
 end
+
+
 end

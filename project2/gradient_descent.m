@@ -13,7 +13,10 @@ k = 0;
 
 i=0;
 alpha=alpha_init;
-while i<no_of_iteration && abs(alpha)>f_tol
+p=-g(xk);
+disp(p);
+%3. diff tolerance and number of iteration tracking
+while i<no_of_iteration && abs(norm(alpha*p))>f_tol
     i=i+1;
     p=-g(xk);
     alpha=backtrack_ls(f,g,p,xk,alpha);

@@ -39,7 +39,7 @@ if nargin>8
         case 'Newton'
             [err,pest] = newton_method(f,g,H,x0,E,N,pstar);
         otherwise
-            [err,pest] = Q_Newton(f,g,x0,N,E,pstar);
+            [err,pest] = quasinewton_method(f,g,x0,E,N,pstar);
     end
             
 else
@@ -51,7 +51,7 @@ else
         case 'Newton'
             [err,pest] = newton_method(f,g,H,x0,E,N);
         otherwise
-            [err,pest] = Q_Newton(f,g,x0,N,E);
+            [err,pest] = quasinewton_method(f,g,x0,E,N);
     end    
 end
 

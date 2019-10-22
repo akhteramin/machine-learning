@@ -38,6 +38,9 @@ if nargin>8
             [err,pest] = gradientDescentS(f,g,x0,N,E, pstar);
         case 'Newton'
             [err,pest] = newton_method(f,g,H,x0,E,N,pstar);
+        case 'Subgradient'
+            [err,pest] = subgradient_method(f,g,x0,E,N,pstar);
+            
         otherwise
             [err,pest] = quasinewton_method(f,g,x0,E,N,pstar);
     end
@@ -50,6 +53,8 @@ else
             [err,pest] = gradientDescentS(f,g,x0,N,E);
         case 'Newton'
             [err,pest] = newton_method(f,g,H,x0,E,N);
+        case 'Subgradient'
+            [err,pest] = subgradient_method(f,g,x0,E,N);
         otherwise
             [err,pest] = quasinewton_method(f,g,x0,E,N);
     end    

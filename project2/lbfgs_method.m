@@ -2,7 +2,7 @@ function [err,pest] = lbfgs_method(f,g,x0,E,N,varagin)
 
 
 x = x0;
-m=10;
+m=5;
 err = [];
 
 if nargin >5
@@ -24,19 +24,21 @@ for k = 1:N
     y = g(x) - g(x0);
     
     %start two loop recursion
-    q=-g(x);
-    disp(dot(s(:,1),q));
-    rho=1./(y'*s);
+    q=g(x);
+    
     for i=m-1:-1:1
-        alpha(i)=rho(i)*dot(s(:,i),q);
-        q=q-alpha(i)*y(:,i);
+        alpha=(s'*q)/(y'*s);
+        q=q-alpha*y;
     end
-    
+    gama=(s'*y)/(y'*y);
+    F=gama*eye(length(x0));
+    p=F*q;
     for i=1:m-1
-        B=rho(i)*y(:,i)'*p;
-        p=p+s(:,i)*(alpha(i)-B);
+        B=y'*p/(y'*s);
+        p=p+s*(alpha-B);
     end
-    
+    p=-p;
+    disp(p);
     %finish two loop recursion
     
     % F = F + (y'*(F*y + s)/(y'*s)^2)*(s*s') - (s*y'*F + F*y*s')/(y'*s);

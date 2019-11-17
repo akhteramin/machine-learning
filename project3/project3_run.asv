@@ -1,0 +1,59 @@
+function project_run=project3_run(type,function_no)
+
+%% Just un-comment any line to run that function
+
+%% for normal distribution test
+switch type
+    case "Normal"
+        switch function_no
+            case 1
+            case 2
+            case 3
+            case 4
+            case 1
+            case 1
+            case 1
+            case 1
+            case 1
+            case 10
+        end
+    case "Bernoulli"
+    case "Uniform"
+end
+ Prj3_Normal(1)        %% Function 1 for Normal DIstribution
+% Prj3_Normal(2)        %% Function 2 for Normal DIstribution
+% Prj3_Normal(3)        %% Function 3 for Normal DIstribution
+% Prj3_Normal(4)        %% Function 4 for Normal DIstribution
+% Prj3_Normal(5)        %% Function 5 for Normal DIstribution
+% Prj3_Normal(6)        %% Function 6 for Normal DIstribution
+% Prj3_Normal(7)        %% Function 7 for Normal DIstribution
+% Prj3_Normal(8)        %% Function 8 for Normal DIstribution
+% Prj3_Normal(9)        %% Function 9 for Normal DIstribution
+% Prj3_Normal(10)        %% Function 10 for Normal DIstribution
+
+%% for Uniform Distribution test
+% Prj3_Uniform(1)        %% Function 1 for Uniform DIstribution
+% Prj3_Uniform(2)        %% Function 2 for Uniform DIstribution
+% Prj3_Uniform(3)        %% Function 3 for Uniform DIstribution
+% Prj3_Uniform(4)        %% Function 4 for Uniform DIstribution
+% Prj3_Uniform(5)        %% Function 5 for Uniform DIstribution
+% Prj3_Uniform(6)        %% Function 6 for Uniform DIstribution
+% Prj3_Uniform(7)        %% Function 7 for Uniform DIstribution
+% Prj3_Uniform(8)        %% Function 8 for Uniform DIstribution
+% Prj3_Uniform(9)        %% Function 9 for Uniform DIstribution
+% Prj3_Uniform(10)        %% Function 10 for Uniform DIstribution 
+
+%% for Bernoulli Distribution test
+%  Prj3_Bernoulli(1)        %% Function 1 for Bernoulli DIstribution
+%  Prj3_Bernoulli(2)        %% Function 2 for Bernoulli DIstribution
+%  Prj3_Bernoulli(3)        %% Function 3 for Bernoulli DIstribution
+%  Prj3_Bernoulli(4)        %% Function 4 for Bernoulli DIstribution
+%  Prj3_Bernoulli(5)        %% Function 5 for Bernoulli DIstribution
+%  Prj3_Bernoulli(6)        %% Function 6 for Bernoulli DIstribution
+%  Prj3_Bernoulli(7)        %% Function 7 for Bernoulli DIstribution
+%  Prj3_Bernoulli(8)        %% Function 8 for Bernoulli DIstribution
+%  Prj3_Bernoulli(9)        %% Function 9 for Bernoulli DIstribution
+%  Prj3_Bernoulli(10)        %% Function 10 for Bernoulli DIstribution
+
+
+

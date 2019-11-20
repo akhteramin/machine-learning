@@ -1,12 +1,12 @@
 function Normal(Function_number)
 
 samples = [1 10 100 1000 10000];
+samples_size = length(samples);
 
 mean = [0.01 0.25 0.5 0.75 0.99]; 
-sd = [0.1 0.2 0.5 1 2];           
-
-samples_size = length(samples);
 mean_size = length(mean);
+
+sd = [0.1 0.2 0.5 1 2];           
 sd_size = length(sd);
 
 fprintf('The function number from ci.m file is: %2d\n', Function_number);

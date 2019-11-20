@@ -1,11 +1,10 @@
 function Bernoulli(Function_number)
 
 samples = [1 10 100 1000 10000];
-theta = [.01 .1 .25 .5 .75 .99];
-
-
-theta_size = length(theta);
 samples_size = length(samples);
+
+theta = [.01 .1 .25 .5 .75 .99];
+theta_size = length(theta);
 
 fprintf('The function number from ci.m file is: %2d\n', Function_number);
 fid = fopen(['Bernoulli_Function_' int2str(Function_number) '.txt'],'wt');

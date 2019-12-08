@@ -93,28 +93,13 @@ elseif nclass == 10
        YReal=trainlabel;
        
        X=[oneMat;testdata];
-       combos = nchoosek(1:30,3)
-       for i=1:length(combos)
-           X=[X;X(combos(i,1),:).*X(combos(i,2),:).*X(combos(i,3),:)];
-       end
         
         Y=W*X;
-        writematrix(Y,"Y_tab.txt",'Delimiter','tab');
-        type 'Y_tab.txt';
         Y=Y';
-        newY=zeros(length(Y),1);
-        for i=1:length(Y)
-            [val,idx]=max(Y(i,:));
-            disp(idx)
-            newY(i)=idx;
-        end
-        Ans=YReal-newY;
+        Ans=Y-YReal;
         fid = fopen('new.txt','w');
-        fprintf(fid,"percentage of correct ans: %f\n ",(length(Ans)-nnz(Ans))/length(Ans));
+        fprintf(fid,"percentage of non correct ans: %f\n ",nnz(Ans));
         fclose(fid);
-        writematrix([YReal newY],"Ans_tab.txt",'Delimiter','tab');
-       type 'Ans_tab.txt';
-       
 % else
 %         fid = fopen('testdata.txt','r');
 %         testdata = fscanf(fid,'%f %f \n',[2, 20]);

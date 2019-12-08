@@ -1,7 +1,5 @@
 function [image,label,PC,Ktol] = read_hw(typ)
 label=[]
-testSubject=35;
-testImage=8;
 
 rootpath="./att_faces";
 [image]=total_mat(rootpath);
@@ -22,7 +20,7 @@ U=[];S=[];V=[];
 if strcmp(typ,"svd")
     [U,S,V] = svd(X);
     PC=U;
-    g=S*S'./N-1;
+    g=(S*S');
     totalVariance=sum(sum(g));
     sumSigma=zeros(length(S),1);
     sumS=0;

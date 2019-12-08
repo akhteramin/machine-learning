@@ -1,0 +1,11 @@
+
+function [ output_args ] = doClassification( )
+% Load data
+    data = load('att_faces.mat','faces');
+    data=data.faces';
+
+    faces_lbs=[];
+    for i=1:40
+        faces_lbs=[faces_lbs; ones(10,1)*i];
+    end
+end

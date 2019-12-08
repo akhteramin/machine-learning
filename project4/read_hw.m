@@ -1,53 +1,28 @@
-function [image,label] = read_hw(typ)
-%output: image: nxN matrix, each column is an image
-% label: Nx1 vector, label for the digit for each imag
-fid = fopen('train-images-idx3-ubyte','r');
-fid2 = fopen('train-labels-idx1-ubyte','r');
+function [image,label,PC,Ktol] = read_hw(typ)
+label=[]
+testSubject=35;
+testImage=8;
 
-mn = fread(fid,4,'uint8');
-
-ni = fread(fid,4,'uint8');
-
-nr = fread(fid,4,'uint8');
-
-nc = fread(fid,4,'uint8');
-
-mn2 = fread(fid2,4,'uint8');
-ni2 = fread(fid2,4,'uint8');
-
-label = fread(fid2,60000,'uint8');
-% 
-% ln0 = length(find(label==0));
-% ln1 = length(find(label==1));
-% ln2 = length(find(label==2));
-% ln3 = length(find(label==3));
-% ln4 = length(find(label==4));
-% fourValue=find(label==4);
-% ln5 = length(find(label==5));
-% ln6 = length(find(label==6));
-% ln7 = length(find(label==7));
-% ln8 = length(find(label==8));
-% ln9 = length(find(label==9));
 rootpath="./att_faces";
 [image]=total_mat(rootpath);
 image=image';
-X=zeros(length(image),92*112);
+X=zeros(400,92*112);
 disp(size(image));
 for i=1:400
     meanX=mean(image(i,:));
     X(i,:)=image(i,:)-meanX;
 end
 X=X';
-writematrix(image(1,:)'+" "+image(2,:)',"X_tab.txt",'Delimiter','tab');
-type 'X_tab.txt';
+
 image = image';
-fclose(fid);
-
-
+disp(size(image))
+N=size(X,2);
+PC=[];Ktol=0;
 U=[];S=[];V=[];
 if strcmp(typ,"svd")
     [U,S,V] = svd(X);
-    g=S*S';
+    PC=U;
+    g=S*S'./N-1;
     totalVariance=sum(sum(g));
     sumSigma=zeros(length(S),1);
     sumS=0;
@@ -56,31 +31,36 @@ if strcmp(typ,"svd")
         sumSigma(k)=sum(g(k,:));
         sumS=sumS+sumSigma(k);
         sumSigma(k)=sumS/totalVariance;
-        if sumS/totalVariance>=0.9
+        if sumS/totalVariance>=0.90 && K==0
             K=k;
+            Ktol=K;
         end
     end
     plot(sumSigma,"o")
     xlabel("total variance"+int2str(totalVariance)+" "+int2str(S(1,1)))
-    xlim([0 784])
+    xlim([0 1000])
     ylim([0 1])
     
     Unew=U(:,1:K);
+    disp(K);
     Vnew=V(:,1:K);
     Snew=S(1:K,1:K);
     Xnew=Unew*Snew*Vnew';
     Xnew=Xnew';
-    for l=1:5
-        B=reshape(Xnew(l,:),[92,112])
-        figure;
-        imshow(B, 'InitialMagnification', 'fit')
-        title('4')
+    for l=1:11
+        face=reshape(Xnew(l,:),112,92);
+        figure()
+        imshow(face, []);
+        title('Face'+" "+int2str(K))
     end
 
 else
-    [V,D]=eig(X*X');
+    [S,D,V]=eig((X*X')./N-1);
     [D,idx]=sort(sort(D,1,'descend'),2,'descend');
     D=diag(D(1,:));
+    
+    PC = S(:,sorted);
+    
     totalVariance=sum(sum(D));
     sumSigma=zeros(10304,1)
     sumS=0;
@@ -89,8 +69,10 @@ else
         sumSigma(k)=sum(D(k,:));
         sumS=sumS+sumSigma(k);
         sumSigma(k)=sumS/totalVariance;
-        if sumS/totalVariance>=0.9
+        if sumS/totalVariance>=0.9 && K==0
             K=k;
+            Ktol=K;
+
         end
     end
     plot(sumSigma,"o")
@@ -103,10 +85,10 @@ else
     Xnew=Vnew*Dnew*Vnew';
     Xnew=Xnew';
     for l=1:5
-        B=reshape(Xnew(l,:),[92,112])
-        figure;
-        imshow(B, 'InitialMagnification', 'fit')
-        title('4'+int2str(K))
+        face=reshape(Xnew(l,:),112,92);
+        figure()
+        imshow(face, []);
+        title('Face'+" "+int2str(K))
     end
     
 end

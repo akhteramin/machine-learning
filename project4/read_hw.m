@@ -11,7 +11,6 @@ for i=1:400
     X(i,:)=image(i,:)-meanX;
 end
 X=X';
-
 image = image';
 disp(size(image))
 N=size(X,2);
@@ -45,11 +44,13 @@ if strcmp(typ,"svd")
     Snew=S(1:K,1:K);
     Xnew=Unew*Snew*Vnew';
     Xnew=Xnew';
+
     for l=1:11
         face=reshape(Xnew(l,:),112,92);
         figure()
         imshow(face, []);
         title('Face'+" "+int2str(K))
+
     end
 
 else
@@ -87,6 +88,7 @@ else
         figure()
         imshow(face, []);
         title('Face'+" "+int2str(K))
+
     end
     
 end

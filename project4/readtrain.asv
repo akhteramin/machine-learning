@@ -121,9 +121,10 @@ elseif nclass == 10
         
        Z=[oneMat;traindata;];
         
-       combos = nchoosek(1:30,3)
+       Z=[Z;Z(2,:).*Z(2,:);Z(2,:).*Z(3,:)];
+       combos = combntns(1:5,3)
        for i=1:length(combos)
-           Z=[Z;Z(combos(i,1),:).*Z(combos(i,2),:).*Z(combos(i,3),:)];
+           Z=[Z;Z(combos(i,1),:).*Z(2,:);Z(2,:).*Z(3,:)];
        end
         
        trainlabel = label(1:16000)+1;

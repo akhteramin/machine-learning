@@ -1,4 +1,4 @@
-function [trainlabel,traindata] = readtrain(nclass,nexample)
+function [trainlabel,traindata] = readtrain()
 % read training data from the given examples in class
 % Input:
 %    - nclass: 2 or 3, to read for the 2-class or 3-class examples
@@ -10,7 +10,6 @@ function [trainlabel,traindata] = readtrain(nclass,nexample)
 %    - traindata: matrix, each column is one training data and the number
 %    of columns is the number of data in the set
 
-if nclass == 11
        [img, label,PC,Ktol] = read_hw("svd");
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
@@ -65,8 +64,8 @@ if nclass == 11
        %disp(size(b))
        %disp(size(A))
         
-       readtest(nclass,nexample,W,PC,image,Ktol)
-end
+       readtest(W,PC,image,Ktol)
+
 end
 function [ t_mat ] = total_mat( root_path)
 totalsub=40;

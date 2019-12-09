@@ -1,1 +1,0 @@
-percentage of correct ans: 54.166667 

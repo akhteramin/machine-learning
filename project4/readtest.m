@@ -1,4 +1,4 @@
-function [testdata] = readtest(nclass,nexample,W,PC,image,Ktol)
+function [testdata] = readtest(W,PC,image,Ktol)
 % read test data from the given examples in class
 % Input:
 %    - nclass: 2 or 3, to read for the 2-class or 3-class examples
@@ -8,8 +8,6 @@ function [testdata] = readtest(nclass,nexample,W,PC,image,Ktol)
 %    - testdata: matrix, each column is one test data and the number
 %    of columns is the number of data in the set
 
-
-if nclass == 11
 
        [testImage,label]=readyTestImage(image');
        disp(size(testImage));
@@ -49,11 +47,10 @@ if nclass == 11
         writematrix(newY,"Y_tab.txt",'Delimiter','tab');
         type 'Y_tab.txt';
         Ans=YReal'-newY;
-        disp(YReal)
-        writematrix(YReal,"Ans_tab.txt",'Delimiter','tab');
+        writematrix([YReal' newY],"Ans_tab.txt",'Delimiter','tab');
         type 'Ans_tab.txt';
-        fid = fopen('new.txt','w');
-        fprintf(fid,"percentage of correct ans: %f %\n ",(1-(nnz(Ans))/length(Ans))*100);
+        fid = fopen('final_result.txt','w');
+        fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(Ans))/length(Ans))*100);
         fclose(fid);
         
        
@@ -62,7 +59,7 @@ if nclass == 11
 %         testdata = fscanf(fid,'%f %f \n',[2, 20]);
 %         fclose(fid);
 end
-end
+
 
 function [testImage,label] = readyTestImage(images)
     [Mp,Np]=size(images);

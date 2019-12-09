@@ -1,4 +1,4 @@
-function [image,label,PC,Ktol] = read_hw(typ)
+function [image,label,PC,Ktol] = eigen(typ,tol,show)
 label=[]
 
 rootpath="./att_faces";
@@ -29,10 +29,13 @@ if strcmp(typ,"svd")
         sumSigma(k)=sum(g(k,:));
         sumS=sumS+sumSigma(k);
         sumSigma(k)=sumS/totalVariance;
-        if sumS/totalVariance>=0.90 && K==0
+        if sumS/totalVariance>=tol && K==0
             K=k;
             Ktol=K;
         end
+    end
+    if show==0
+        return
     end
     plot(sumSigma,"o")
     xlabel("total variance"+int2str(totalVariance)+" "+int2str(V(1,1)))
@@ -46,20 +49,20 @@ if strcmp(typ,"svd")
     Xnew=Unew*Snew*Vnew';
     Xnew=Xnew';
 
-    for l=1:11
+    for l=1:5
         face=reshape(Xnew(l,:),112,92);
         figure()
         imshow(face, []);
         title('Face'+" "+int2str(K))
 
     end
-
+%%%%%%%%%%%%%%%%%% Modify and fix eigen.%%%%%%%%%%%%%%%%%%
 else
-    [S,D,V]=eig((X*X')./N-1);
+    [D,V]=eig((X*X')./N-1);
     [D,idx]=sort(sort(D,1,'descend'),2,'descend');
     D=diag(D(1,:));
     
-    PC = S(:,sorted);
+    PC = D;
     
     totalVariance=sum(sum(D));
     sumSigma=zeros(10304,1)
@@ -69,11 +72,14 @@ else
         sumSigma(k)=sum(D(k,:));
         sumS=sumS+sumSigma(k);
         sumSigma(k)=sumS/totalVariance;
-        if sumS/totalVariance>=0.9 && K==0
+        if sumS/totalVariance>=tol && K==0
             K=k;
             Ktol=K;
 
         end
+    end
+    if show==0
+        return
     end
     plot(sumSigma,"o")
     xlabel("total variance")

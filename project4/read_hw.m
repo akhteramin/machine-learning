@@ -17,11 +17,12 @@ N=size(X,2);
 PC=[];Ktol=0;
 U=[];S=[];V=[];
 if strcmp(typ,"svd")
-    [U,S,V] = svd(X);
-    PC=U;
-    g=(S*S');
+    X=X/sqrt(N);
+    [PC,V,u] = svd(X);
+   
+    g=(V*V');
     totalVariance=sum(sum(g));
-    sumSigma=zeros(length(S),1);
+    sumSigma=zeros(length(V),1);
     sumS=0;
     K=0;
     for k=1:length(g)
@@ -34,14 +35,14 @@ if strcmp(typ,"svd")
         end
     end
     plot(sumSigma,"o")
-    xlabel("total variance"+int2str(totalVariance)+" "+int2str(S(1,1)))
+    xlabel("total variance"+int2str(totalVariance)+" "+int2str(V(1,1)))
     xlim([0 1000])
     ylim([0 1])
     
-    Unew=U(:,1:K);
+    Unew=PC(:,1:K);
     disp(K);
-    Vnew=V(:,1:K);
-    Snew=S(1:K,1:K);
+    Vnew=u(:,1:K);
+    Snew=V(1:K,1:K);
     Xnew=Unew*Snew*Vnew';
     Xnew=Xnew';
 

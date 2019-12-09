@@ -1,0 +1,120 @@
+function [testdata] = readtest(nclass,nexample,W,PC,image,Ktol)
+% read test data from the given examples in class
+% Input:
+%    - nclass: 2 or 3, to read for the 2-class or 3-class examples
+%    - nexample: 1 or 2, to read for the first or second example in each case
+% following the order presented in the lecture note
+% output:
+%    - testdata: matrix, each column is one test data and the number
+%    of columns is the number of data in the set
+
+
+if nclass == 11
+%        rootpath="./att_faces";
+%        [image]=total_mat(rootpath);
+       [testImage,label]=readyTestImage(image');
+       disp(size(testImage));
+       testImage=testImage';
+       testImage=PC'*testImage;
+       
+       testImage = testImage';
+%        oneMat=ones(1,280);
+      
+       
+       X=testImage(1:Ktol,1:120);
+
+       testlabel = label;
+       YReal=testlabel;
+       YReal=YReal';
+        
+        size(W)
+        size(X)
+        
+        Y=W*X;
+        
+        Y=Y';
+        writematrix(Y,"Y_tab.txt",'Delimiter','tab');
+        type 'Y_tab.txt';
+        newY=zeros(length(Y),1);
+        for i=1:length(Y)
+            [val,idx]=max(Y(i,:));
+            disp(idx)
+            newY(i)=idx;
+        end
+        Ans=YReal-newY;
+        fid = fopen('new.txt','w');
+        fprintf(fid,"percentage of correct ans: %f\n ",(length(Ans)-nnz(Ans))/length(Ans));
+        fclose(fid);
+        writematrix([YReal newY],"Ans_tab.txt",'Delimiter','tab');
+       type 'Ans_tab.txt';
+       
+% else
+%         fid = fopen('testdata.txt','r');
+%         testdata = fscanf(fid,'%f %f \n',[2, 20]);
+%         fclose(fid);
+end
+end
+
+% 
+% function [ t_mat,label ] = total_mat( root_path)
+% label=[];
+% start=9
+% finish=10
+% totalsub=35;
+% impersub=8;
+% N = totalsub*impersub;
+% M = 92*112;
+% t_mat = zeros(M,120);
+% msg = '';
+%     l=1;
+%     for s=1:totalsub
+%         for i=start:finish
+%             nextPath = strcat(root_path, '/s', int2str(s), '/', int2str(i), '.pgm');
+%             if exist(nextPath, 'file') 
+%                 nextImage = imread(nextPath, 'PGM');
+%                     t_mat(:,l) = nextImage ( : );
+%             else
+%                 disp(strcat(msg,'image [', nextPath,'] does not exist.\n'));
+%             end
+%             label(l)=s;
+%             l=l+1;
+%         end
+%     end
+%     for s=totalsub+1:40
+%         for i=1:finish
+%             nextPath = strcat(root_path, '/s', int2str(s), '/', int2str(i), '.pgm');
+%             if exist(nextPath, 'file') 
+%                 nextImage = imread(nextPath, 'PGM');
+%                     t_mat(:,l) = nextImage ( : );
+%             else
+%                 disp(strcat(msg,'image [', nextPath,'] does not exist.\n'));
+%             end
+%             label(l)=s;
+%             l=l+1;
+%         end
+%     end
+%     fprintf("holly molly:%f",l);
+% end
+function [testImage] = readyTestImage(images)
+    [Mp,Np]=size(images);
+    testImage=zeros(120,Np);
+    
+    disp(size(images));
+    disp(size(testImage));
+    j=1;
+    for i=1:400
+        if i<=350 && (rem(i,10)==9 || rem(i,10)==0)
+            testImage(j,:)=images(i,:);
+            label(j)=(i/10)+1;
+            j=j+1;
+        
+        elseif i>350
+            testImage(j,:)=images(i,:);
+            label(j)=(i/10)+1;
+            j=j+1;
+            
+        end
+        
+    end
+end
+

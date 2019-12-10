@@ -35,7 +35,8 @@ function [trainlabel,traindata] = trainclassifier()
        
        %disp(size(b))
        %disp(size(A))
-        
+       %%%%Classifier using PCA%%%%%%%%%%%%%%%%%%%%%%%%%
+
         classify(W,PC,image,Ktol)
        %%%%Face Identification%%%%%%%%%%%%%%%%%%%%%%%%%
         [result]=classify_new_images(readyTrainImage(image')',readyTestImage(image')')
@@ -52,11 +53,12 @@ function [trainlabel,traindata] = trainclassifier()
         fclose(fid);
         
         %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
-%         [testImage,testlabel]=readyTestImage(image');
-%         [predicted_labels,nn_index,accuracy]=KNN_(35,trainImage',trainlabel,testImage',testlabel)
-%         fid = fopen('KNN_final_result.txt','w');
-%         fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
-%         fclose(fid);
+        [testImage,testlabel]=readyTestImage(image');
+        
+        [accuracy]=KNN(8,trainImage',trainlabel,testImage,testlabel)
+        fid = fopen('KNN_final_result.txt','w');
+        fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
+        fclose(fid);
 
 
 end
@@ -204,7 +206,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%classify New images by using K-mean%%%%%%%%%%%%%%%%%%
-function [ result ] = classify_new_images( data_train, dataTest,data)
+function [ result ] = classify_new_images( data_train, dataTest)
     % dataTest: Images to be classified.
     % result  : Returns 1 or 0
     [img, label,PC,Ktol] = eigen("svd",0.86,0);
@@ -240,42 +242,40 @@ function [ result ] = classify_new_images( data_train, dataTest,data)
     
 end
 
-% %%%%%%%%%%%%%%%%%%%%KNN%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% function [predicted_labels,nn_index,accuracy] = KNN_(k,data,labels,t_data,t_labels)
-%     %initialization
-%     predicted_labels=zeros(size(t_data,1),1);
-%     ed=zeros(size(t_data,1),size(data,1)); %ed: (MxN) euclidean distances 
-%     ind=zeros(size(t_data,1),size(data,1)); %corresponding indices (MxN)
-%     k_nn=zeros(size(t_data,1),k); %k-nearest neighbors for testing sample (Mxk)
-%     %calc euclidean distances between each testing data point and the training
-%     %data samples
-%     for test_point=1:size(t_data,1)
-%         for train_point=1:size(data,1)
-%             %calc and store sorted euclidean distances with corresponding indices
-%             ed(test_point,train_point)=sqrt(...
-%                 sum((t_data(test_point,:)-data(train_point,:)).^2));
-%         end
-%         [ed(test_point,:),ind(test_point,:)]=sort(ed(test_point,:));
-%     end
-%     %find the nearest k for each data point of the testing data
-%     k_nn=ind(:,1:k);
-%     nn_index=k_nn(:,1);
-%     %get the majority vote 
-%     for i=1:size(k_nn,1)
-%         options=unique(labels(k_nn(i,:)'));
-%         max_count=0;
-%         max_label=0;
-%         for j=1:length(options)
-%             L=length(find(labels(k_nn(i,:)')==options(j)));
-%             if L>max_count
-%                 max_label=options(j);
-%                 max_count=L;
-%             end
-%         end
-%         predicted_labels(i)=max_label;
-%     end
-%     %calculate the classification accuracy
-%     if isempty(t_labels)==0
-%         accuracy=length(find(predicted_labels==t_labels))/size(t_data,1);
-%     end
-% end
+% %%%%%%%%%%%%%%%%%%%%KNN classifier%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [accuracy] = KNN(k,traindata,labels,testdata,testlabels)
+    %initialization
+    pred_labels=zeros(size(testdata,1),1);
+    euclid_dist=zeros(size(testdata,1),size(traindata,1)); 
+    ind=zeros(size(testdata,1),size(traindata,1));
+    k_nn=zeros(size(testdata,1),k); 
+    
+    for i=1:size(testdata,1)
+        for j=1:size(traindata,1)
+            euclid_dist(i,j)=sqrt(sum((testdata(i,:)-traindata(j,:)).^2));
+        end
+        [euclid_dist(i,:),ind(i,:)]=sort(euclid_dist(i,:));
+%         ed(test_point,:)=ed(test_point,:);
+
+    end
+    
+    k_nn=ind(:,1:k);
+    k_nn_options=k_nn';
+    %get the majority vote 
+    for i=1:size(k_nn,1)
+        options=unique(labels(k_nn_options(:,i)));
+        max_count=0;
+        max_label=0;
+        for j=1:length(options)
+            count=length(find(labels(k_nn_options(:,i))==options(j)));
+            if count>max_count
+                max_label=options(j);
+                max_count=count;
+            end
+        end
+        pred_labels(i)=max_label;
+    end
+    writematrix(pred_labels,"k_nn.txt",'Delimiter','tab');
+    type 'k_nn.txt';
+    accuracy=length(find(pred_labels==testlabels))/size(testdata,1);
+end

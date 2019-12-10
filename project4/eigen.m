@@ -42,6 +42,8 @@ if strcmp(typ,"svd")
     xlim([0 1000])
     ylim([0 1])
     
+    %%%%%%%% Reconstruction%%%%%%%%%%
+
     Unew=PC(:,1:K);
     disp(K);
     Vnew=u(:,1:K);
@@ -56,7 +58,7 @@ if strcmp(typ,"svd")
         title('Face'+" "+int2str(K))
 
     end
-%%%%%%%%%%%%%%%%%% Modify and fix eigen.%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% eigen.%%%%%%%%%%%%%%%%%%
 else
 
     [W, EvalueMatrix] = eig(cov(X'));
@@ -68,7 +70,7 @@ else
     
     W = W(:,end:-1:1); W=W';  
 
-    % generate PCA component space (PCA scores)
+    % generate PCA 
     disp(size(W))
     disp(size(X))
     
@@ -97,20 +99,21 @@ else
     xlim([0 1000])
     ylim([0 1])
     disp(size(Evalues))
-    
-    W=W(:,1:K);
+    %%%%%%%% Reconstruction%%%%%%%%%%
+    W=W(1:K,1:K);
+    EigenFace=PC(:,1:K);
     disp(W)
     disp(X)
     
-%     Xnew = PC*W'; 
-%     
-%     for l=1:5
-%         face=reshape(Xnew(l,:),112,92);
-%         figure()
-%         imshow(face, []);
-%         title('Face'+" "+int2str(K))
-% 
-%     end
+    Xnew = EigenFace*W*EigenFace'; 
+    
+    for l=1:5
+        face=reshape(Xnew(l,:),112,92);
+        figure()
+        imshow(face, []);
+        title('Face'+" "+int2str(K))
+
+    end
     
 end
 

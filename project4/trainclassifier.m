@@ -7,7 +7,7 @@ function [trainlabel,traindata] = trainclassifier()
    
        [trainImage,trainlabel]=readyTrainImage(image');
        disp(size(trainImage));
-       [PC,Ktol] = eigen_callee(0.86,0,trainImage);
+       [PC,Ktol] = eigen_callee(0.9,0,trainImage);
        trainImage=trainImage';
        
        trainImage=PC'*trainImage;
@@ -40,9 +40,9 @@ function [trainlabel,traindata] = trainclassifier()
        %disp(size(A))
        %%%%Classifier using PCA%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        classify(W,PC,image,Ktol)
+        identify(W,PC,image,Ktol)
        %%%%Face Identification%%%%%%%%%%%%%%%%%%%%%%%%%
-        [result]=classify_new_images(readyTrainImage(image')',readyTestImage(image')')
+        [result]=classify_new_images(Ktol, PC,readyTrainImage(image')',readyTestImage(image')')
         fid = fopen('face_final_result.txt','w');
         fprintf(fid,"percentage of correct ans: %f \n ",((nnz(result))/length(result))*100);
         fclose(fid);
@@ -50,7 +50,7 @@ function [trainlabel,traindata] = trainclassifier()
        %%%Non Face Identification%%%%%%%%%%%%
         data_objects = load('nonfaces.mat','nonfaces');
         data_objects=data_objects.nonfaces';
-        [result]=classify_new_images(readyTrainImage(image')',data_objects)
+        [result]=classify_new_images(Ktol, PC,readyTrainImage(image')',data_objects)
         fid = fopen('nonface_final_result.txt','w');
         fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(result))/length(result))*100);
         fclose(fid);
@@ -67,8 +67,8 @@ function [trainlabel,traindata] = trainclassifier()
 end
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test and classify%%%%%%%%%%%%%%%%
-function [Ans] = classify(W,PC,image,Ktol)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test and identify%%%%%%%%%%%%%%%%
+function [Ans] = identify(W,PC,image,Ktol)
 
        [testImage,label]=readyTestImage(image');
        disp(size(testImage));
@@ -208,11 +208,11 @@ end
 
 
 
-%%%%%%%%%%%%%%%%%%classify New images by using K-mean%%%%%%%%%%%%%%%%%%
-function [ result ] = classify_new_images( data_train, dataTest)
+%%%%%%%%%%%%%%%%%%identify New images by using K-mean%%%%%%%%%%%%%%%%%%
+function [ result ] = classify_new_images(Ktol, PC, data_train, dataTest)
     % dataTest: Images to be classified.
     % result  : Returns 1 or 0
-    [img, label,PC,Ktol] = eigen("svd",0.86,0);
+    %[img, label,PC,Ktol] = eigen("svd",0.86,0);
     K = Ktol;
     data_train = PC' * data_train;
     data_train = data_train(1:K, : );

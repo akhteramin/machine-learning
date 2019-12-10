@@ -1,10 +1,10 @@
 function [trainlabel,traindata] = trainclassifier()
-       [img, label,PC,Ktol] = eigen("svd",0.86,1);
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
    
        [trainImage,trainlabel]=readyTrainImage(image');
        disp(size(trainImage));
+       [PC,Ktol] = eigen_callee(0.86,0,trainImage);
        trainImage=trainImage';
        
        trainImage=PC'*trainImage;

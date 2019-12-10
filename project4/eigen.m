@@ -19,7 +19,7 @@ U=[];S=[];V=[];
 if strcmp(typ,"svd")
     X=X/sqrt(N);
     [PC,V,u] = svd(X);
-   
+    
     g=(V*V');
     totalVariance=sum(sum(g));
     sumSigma=zeros(length(V),1);
@@ -58,18 +58,29 @@ if strcmp(typ,"svd")
     end
 %%%%%%%%%%%%%%%%%% Modify and fix eigen.%%%%%%%%%%%%%%%%%%
 else
-    [D,V]=eig((X*X')./N-1);
-    [D,idx]=sort(sort(D,1,'descend'),2,'descend');
-    D=diag(D(1,:));
+
+    [W, EvalueMatrix] = eig(cov(X'));
+    Evalues = diag(EvalueMatrix');
     
-    PC = D;
     
-    totalVariance=sum(sum(D));
+    % order by largest eigenvalue
+    Evalues = Evalues(end:-1:1);
+    
+    W = W(:,end:-1:1); W=W';  
+
+    % generate PCA component space (PCA scores)
+    disp(size(W))
+    disp(size(X))
+    
+    PC = W * X;
+    
+    
+    totalVariance=sum(sum(Evalues));
     sumSigma=zeros(10304,1)
     sumS=0;
     K=0;
     for k=1:10304
-        sumSigma(k)=sum(D(k,:));
+        sumSigma(k)=sum(Evalues(k,:));
         sumS=sumS+sumSigma(k);
         sumSigma(k)=sumS/totalVariance;
         if sumS/totalVariance>=tol && K==0
@@ -85,22 +96,26 @@ else
     xlabel("total variance")
     xlim([0 1000])
     ylim([0 1])
+    disp(size(Evalues))
     
-    Vnew=V(:,1:K);
-    Dnew=D(1:K,1:K);
-    Xnew=Vnew*Dnew*Vnew';
-    Xnew=Xnew';
-    for l=1:5
-        face=reshape(Xnew(l,:),112,92);
-        figure()
-        imshow(face, []);
-        title('Face'+" "+int2str(K))
-
-    end
+    W=W(:,1:K);
+    disp(W)
+    disp(X)
+    
+%     Xnew = PC*W'; 
+%     
+%     for l=1:5
+%         face=reshape(Xnew(l,:),112,92);
+%         figure()
+%         imshow(face, []);
+%         title('Face'+" "+int2str(K))
+% 
+%     end
     
 end
 
 end
+
 
 
 function [ t_mat ] = total_mat( root_path)

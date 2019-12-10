@@ -1,5 +1,5 @@
 function [trainlabel,traindata] = trainclassifier()
-       [img, label,PC,Ktol] = eigen("svd",0.80,1);
+       [img, label,PC,Ktol] = eigen("svd",0.86,1);
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
    
@@ -50,6 +50,13 @@ function [trainlabel,traindata] = trainclassifier()
         fid = fopen('nonface_final_result.txt','w');
         fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(result))/length(result))*100);
         fclose(fid);
+        
+        %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
+%         [testImage,testlabel]=readyTestImage(image');
+%         [predicted_labels,nn_index,accuracy]=KNN_(35,trainImage',trainlabel,testImage',testlabel)
+%         fid = fopen('KNN_final_result.txt','w');
+%         fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
+%         fclose(fid);
 
 
 end
@@ -63,7 +70,6 @@ function [Ans] = classify(W,PC,image,Ktol)
        testImage=testImage';
        testImage=PC'*testImage;
        
-       testImage = testImage;
        oneMat=ones(1,120);
       
        
@@ -194,39 +200,82 @@ function [trainImage,trainlabel] = readyTrainImage(images)
    end
     
 end
+
+
+
 %%%%%%%%%%%%%%%%%%classify New images by using K-mean%%%%%%%%%%%%%%%%%%
 function [ result ] = classify_new_images( data_train, dataTest,data)
-% dataTest: Images to be classified.
-% result  : Returns 1 or 0
-[img, label,PC,Ktol] = eigen("svd",0.86,0);
-K = Ktol;
-data_train = PC' * data_train;
-data_train = data_train(1:K, : );
-dataTest = PC' * dataTest;
-dataTest = dataTest(1:K, : );
+    % dataTest: Images to be classified.
+    % result  : Returns 1 or 0
+    [img, label,PC,Ktol] = eigen("svd",0.86,0);
+    K = Ktol;
+    data_train = PC' * data_train;
+    data_train = data_train(1:K, : );
+    dataTest = PC' * dataTest;
+    dataTest = dataTest(1:K, : );
 
-% Get centroid of traiing data
-data_train = data_train';
-dataTest = dataTest';
-[idxs,centroid,sum_squred_dist,squred_dists] = kmeans(data_train,1,'distance','sqEuclidean');
+    % Get centroid of traiing data
+    data_train = data_train';
+    dataTest = dataTest';
+    [idxs,centroid,sum_squred_dist,squred_dists] = kmeans(data_train,1,'distance','sqEuclidean');
 
-dists = sqrt(squred_dists);
+    dists = sqrt(squred_dists);
 
-% Classifying testing data using centroid
-[tn,tp] = size(dataTest);
-result = zeros(tn,1);
-threshold = prctile(dists, 100);
-for i =1:tn
-    x = dataTest(i,:);
-    dist_to_centroid = norm(centroid - x);
-    if dist_to_centroid < threshold
-        result(i) = 1;
-    else
-        result(i) = 0;
+    % Classifying testing data using centroid
+    [tn,tp] = size(dataTest);
+    result = zeros(tn,1);
+    threshold = prctile(dists, 100);
+    for i =1:tn
+        x = dataTest(i,:);
+        dist_to_centroid = norm(centroid - x);
+        if dist_to_centroid < threshold
+            result(i) = 1;
+        else
+            result(i) = 0;
+        end
+
     end
+    writematrix(result,"K_Means_Identification_Result.txt",'Delimiter','tab');
+    type 'K_Means_Identification_Result.txt';
     
 end
-writematrix(result,"K_Means_Identification_Result.txt",'Delimiter','tab');
-        type 'K_Means_Identification_Result.txt';
-    
-end
+
+% %%%%%%%%%%%%%%%%%%%%KNN%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% function [predicted_labels,nn_index,accuracy] = KNN_(k,data,labels,t_data,t_labels)
+%     %initialization
+%     predicted_labels=zeros(size(t_data,1),1);
+%     ed=zeros(size(t_data,1),size(data,1)); %ed: (MxN) euclidean distances 
+%     ind=zeros(size(t_data,1),size(data,1)); %corresponding indices (MxN)
+%     k_nn=zeros(size(t_data,1),k); %k-nearest neighbors for testing sample (Mxk)
+%     %calc euclidean distances between each testing data point and the training
+%     %data samples
+%     for test_point=1:size(t_data,1)
+%         for train_point=1:size(data,1)
+%             %calc and store sorted euclidean distances with corresponding indices
+%             ed(test_point,train_point)=sqrt(...
+%                 sum((t_data(test_point,:)-data(train_point,:)).^2));
+%         end
+%         [ed(test_point,:),ind(test_point,:)]=sort(ed(test_point,:));
+%     end
+%     %find the nearest k for each data point of the testing data
+%     k_nn=ind(:,1:k);
+%     nn_index=k_nn(:,1);
+%     %get the majority vote 
+%     for i=1:size(k_nn,1)
+%         options=unique(labels(k_nn(i,:)'));
+%         max_count=0;
+%         max_label=0;
+%         for j=1:length(options)
+%             L=length(find(labels(k_nn(i,:)')==options(j)));
+%             if L>max_count
+%                 max_label=options(j);
+%                 max_count=L;
+%             end
+%         end
+%         predicted_labels(i)=max_label;
+%     end
+%     %calculate the classification accuracy
+%     if isempty(t_labels)==0
+%         accuracy=length(find(predicted_labels==t_labels))/size(t_data,1);
+%     end
+% end

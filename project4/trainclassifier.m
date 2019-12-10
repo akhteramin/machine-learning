@@ -1,4 +1,7 @@
 function [trainlabel,traindata] = trainclassifier()
+       %%%%%%%%%%%%%%calling eigen%%%%%%%%%%%%%%%
+        eigen('svd',0.86,1);
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
    

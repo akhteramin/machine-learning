@@ -44,6 +44,14 @@ if strcmp(typ,"svd")
     
     %%%%%%%% Reconstruction%%%%%%%%%%
 
+    for l=1:5
+        face=reshape(PC(l,:),112,92);
+        figure()
+        imshow(face, []);
+        title('Eigen Face'+" "+int2str(K))
+
+    end
+    
     Unew=PC(:,1:K);
     disp(K);
     Vnew=u(:,1:K);
@@ -100,6 +108,15 @@ else
     ylim([0 1])
     disp(size(Evalues))
     %%%%%%%% Reconstruction%%%%%%%%%%
+    EigenFce=PC';
+    for l=1:5
+        face=reshape(EigenFce(l,:),112,92);
+        figure()
+        imshow(face, []);
+        title('Eigen Face'+" "+int2str(K))
+
+    end
+    
     W=W(1:K,1:K);
     EigenFace=PC(:,1:K);
     disp(W)

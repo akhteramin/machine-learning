@@ -1,6 +1,6 @@
 function [trainlabel,traindata] = trainclassifier()
        %%%%%%%%%%%%%%calling eigen%%%%%%%%%%%%%%%
-        eigen('svd',0.86,1);
+%         eigen('svd',0.86,1);
        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
@@ -54,11 +54,13 @@ function [trainlabel,traindata] = trainclassifier()
         fid = fopen('nonface_final_result.txt','w');
         fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(result))/length(result))*100);
         fclose(fid);
-        
+z         
         %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
         [testImage,testlabel]=readyTestImage(image');
+        [trainImg,trainlabel]=readyTrainImage(image');
+
         
-        [accuracy]=KNN(8,trainImage',trainlabel,testImage,testlabel)
+        [accuracy]=KNN(3,trainImg,trainlabel,testImage,testlabel)
         fid = fopen('KNN_final_result.txt','w');
         fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
         fclose(fid);
@@ -248,10 +250,14 @@ end
 % %%%%%%%%%%%%%%%%%%%%KNN classifier%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [accuracy] = KNN(k,traindata,labels,testdata,testlabels)
     %initialization
+   
+    
     pred_labels=zeros(size(testdata,1),1);
     euclid_dist=zeros(size(testdata,1),size(traindata,1)); 
     ind=zeros(size(testdata,1),size(traindata,1));
     k_nn=zeros(size(testdata,1),k); 
+    
+    
     
     for i=1:size(testdata,1)
         for j=1:size(traindata,1)

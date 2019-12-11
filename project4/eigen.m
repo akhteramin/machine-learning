@@ -39,7 +39,7 @@ if strcmp(typ,"svd")
     end
     fig1 = figure()
     plot(sumSigma,"o")
-    xlabel("total variance ="+int2str(totalVariance))
+    xlabel("Principle component")
     ylabel("covariance")
     xlim([0 1000])
     ylim([0 1])
@@ -50,25 +50,32 @@ if strcmp(typ,"svd")
     for l=1:5
         face=reshape(PC(l,:),112,92);
         subplot(1,5,l),imshow(face, []);
-        title('Eigen Face ')
+        title('Eigen Face '+""+int2str(l))
 
     end
     saveas(fig2,'eigen.fig');
-    
+    K = 110;
     Unew=PC(:,1:K);
     disp(K);
     Vnew=u(:,1:K);
     Snew=V(1:K,1:K);
     Xnew=Unew*Snew*Vnew';
     Xnew=Xnew';
-    
+    X_reuse = X';
     fig3 = figure()
     for l=1:5
-        face=reshape(Xnew(l,:),112,92);
-        subplot(1,5,l),imshow(face, []);
-        title('Face '+" "+int2str(K))
+        face=reshape(X_reuse(l,:),112,92);
+        subplot(2,5,l),imshow(face, []);
+        title('Original ')
     end
-    saveas(fig3,'reconstruction.fig');
+    pos = 6;
+    for l=1:5
+        face=reshape(Xnew(l,:),112,92);
+        subplot(2,5,pos),imshow(face, []);
+        title('Reconstruct ')
+        pos = pos +1;
+    end
+    saveas(fig3,'reconstruction_k_110.fig');
     reconstruct(PC,u,V,K);
 %%%%%%%%%%%%%%%%%% eigen.%%%%%%%%%%%%%%%%%%
 else
@@ -128,9 +135,10 @@ else
     
     Xnew = EigenFace*W*EigenFace'; 
     
+    figure()
     for l=1:5
         face=reshape(Xnew(l,:),112,92);
-        figure()
+        
         imshow(face, []);
         title('Face'+" "+int2str(K))
 

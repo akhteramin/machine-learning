@@ -1,6 +1,7 @@
 function [trainlabel,traindata] = trainclassifier()
        %%%%%%%%%%%%%%calling eigen%%%%%%%%%%%%%%%
-%         eigen('svd',0.86,1);
+
+        eigen('svd',0.9,1);
        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        rootpath="./att_faces";
        [image]=total_mat(rootpath);
@@ -40,29 +41,43 @@ function [trainlabel,traindata] = trainclassifier()
        %disp(size(A))
        %%%%Classifier using PCA%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        identify(W,PC,image,Ktol)
+        result0 = identify(W,PC,image,Ktol)
        %%%%Face Identification%%%%%%%%%%%%%%%%%%%%%%%%%
-        [result]=classify_new_images(Ktol, PC,readyTrainImage(image')',readyTestImage(image')')
-        fid = fopen('face_final_result.txt','w');
-        fprintf(fid,"percentage of correct ans: %f \n ",((nnz(result))/length(result))*100);
-        fclose(fid);
+        [result1]=classify_new_images(Ktol, PC,readyTrainImage(image')',readyTestImage(image')')
+        
        
        %%%Non Face Identification%%%%%%%%%%%%
         data_objects = load('nonfaces.mat','nonfaces');
         data_objects=data_objects.nonfaces';
-        [result]=classify_new_images(Ktol, PC,readyTrainImage(image')',data_objects)
-        fid = fopen('nonface_final_result.txt','w');
-        fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(result))/length(result))*100);
-        fclose(fid);
-z         
-        %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
-        [testImage,testlabel]=readyTestImage(image');
-        [trainImg,trainlabel]=readyTrainImage(image');
-
+% <<<<<<< Updated upstream
+%         [result]=classify_new_images(Ktol, PC,readyTrainImage(image')',data_objects)
+%         fid = fopen('nonface_final_result.txt','w');
+%         fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(result))/length(result))*100);
+%         fclose(fid);
+% z         
+%         %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
+%         [testImage,testlabel]=readyTestImage(image');
+%         [trainImg,trainlabel]=readyTrainImage(image');
+% 
+%         
+%         [accuracy]=KNN(3,trainImg,trainlabel,testImage,testlabel)
+%         fid = fopen('KNN_final_result.txt','w');
+%         fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
+% =======
+        %show_data(data_objects');
+        [result2]=classify_new_images(Ktol, PC,readyTrainImage(image')',data_objects)
+       
         
-        [accuracy]=KNN(3,trainImg,trainlabel,testImage,testlabel)
-        fid = fopen('KNN_final_result.txt','w');
-        fprintf(fid,"percentage of correct ans: %f \n ",accuracy);
+        %%%%%%%%%%%%%%%Classifier using KNN%%%%%%%%%%%%
+        [testImage,testlabel]=readyTestImage_with_known_face(image');
+        [trainImg,trainlabel]=readyTrainImage(image');
+        
+        [accuracy]=KNN(1,trainImg,trainlabel,testImage,testlabel)
+        fid = fopen('All_result.txt','w');
+        fprintf(fid,"Face Identification percentage of correct ans: %f \n ",(1-(nnz(result0))/length(result0))*100);
+        fprintf(fid,"Face Data percentage of correct ans: %f \n ",((nnz(result1))/length(result1))*100);        
+        fprintf(fid,"Non-face data percentage of correct ans: %f \n ",(1-(nnz(result2))/length(result2))*100);
+        fprintf(fid,"Face identificaiton with KNN percentage of correct ans: %f \n ",accuracy*100);
         fclose(fid);
 
 
@@ -71,16 +86,18 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%test and identify%%%%%%%%%%%%%%%%
 function [Ans] = identify(W,PC,image,Ktol)
-
-       [testImage,label]=readyTestImage(image');
+        
+       test_image_number = 70;
+       %[testImage,label]=readyTestImage(image');
+       [testImage,label]=readyTestImage_with_known_face(image');
        disp(size(testImage));
        testImage=testImage';
        testImage=PC'*testImage;
        
-       oneMat=ones(1,120);
+       oneMat=ones(1,test_image_number);
       
        
-       X=[oneMat; testImage(1:Ktol,1:120)];
+       X=[oneMat; testImage(1:Ktol,1:test_image_number)];
         
        combos = nchoosek(2:6,2)
        for i=1:length(combos)
@@ -106,14 +123,14 @@ function [Ans] = identify(W,PC,image,Ktol)
             disp(idx)
             newY(i)=idx;
         end
-        writematrix(newY,"Y_tab.txt",'Delimiter','tab');
-        type 'Y_tab.txt';
+%         writematrix(newY,"Y_tab.txt",'Delimiter','tab');
+%         type 'Y_tab.txt';
         Ans=YReal'-newY;
-        writematrix([YReal' newY],"Ans_tab.txt",'Delimiter','tab');
-        type 'Ans_tab.txt';
-        fid = fopen('final_result.txt','w');
-        fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(Ans))/length(Ans))*100);
-        fclose(fid);
+%         writematrix([YReal' newY],"Ans_tab.txt",'Delimiter','tab');
+%         type 'Ans_tab.txt';
+%         fid = fopen('final_result.txt','w');
+%         fprintf(fid,"percentage of correct ans: %f \n ",(1-(nnz(Ans))/length(Ans))*100);
+%         fclose(fid);
         
        
 % else
@@ -149,6 +166,39 @@ function [testImage,label] = readyTestImage(images)
                 label(j)=floor(i/10);
             end
             j=j+1;
+            
+        end
+        
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Select and Build Test Images & Labels%%%%%%%%%%%%%%%%
+
+function [testImage,label] = readyTestImage_with_known_face(images)
+    [Mp,Np]=size(images);
+    testImage=zeros(70,Np);
+    label=zeros(70,1);
+    disp(size(images));
+    disp(size(testImage));
+    j=1;
+    for i=1:350
+        if (rem(i,10)==9 || rem(i,10)==0)
+            testImage(j,:)=images(i,:);
+            if rem(i,10)~=0
+                label(j)=floor(i/10)+1;
+            else
+                label(j)=floor(i/10);
+            end
+            j=j+1;
+        
+%         elseif i>350
+%             testImage(j,:)=images(i,:);
+%             if rem(i,10)~=0
+%                 label(j)=floor(i/10)+1;
+%             else
+%                 label(j)=floor(i/10);
+%             end
+%             j=j+1;
             
         end
         
@@ -242,8 +292,8 @@ function [ result ] = classify_new_images(Ktol, PC, data_train, dataTest)
         end
 
     end
-    writematrix(result,"K_Means_Identification_Result.txt",'Delimiter','tab');
-    type 'K_Means_Identification_Result.txt';
+%     writematrix(result,"K_Means_Identification_Result.txt",'Delimiter','tab');
+%     type 'K_Means_Identification_Result.txt';
     
 end
 

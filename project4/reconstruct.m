@@ -2,7 +2,7 @@ function [K] = reconstruct(PC,u,V,K)
 %RECONSTRUCT Summary of this function goes here
 %   Detailed explanation goes here
     
-    reconstruct_image_list = [33]
+    reconstruct_image_list = [100]
     fig4 = figure()
     count =1;
     for k_count=10 : 20 : 110
@@ -21,6 +21,6 @@ function [K] = reconstruct(PC,u,V,K)
         end
         count = count +1;
     end
-    saveas(fig4,'K_Increase.fig');
+    saveas(fig4,'K_Increases.fig');
 end
 

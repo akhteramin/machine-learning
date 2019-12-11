@@ -48,14 +48,14 @@ function [PC,Ktol] = eigen_callee(tol,show,image)
         Snew=V(1:K,1:K);
         Xnew=Unew*Snew*Vnew';
         Xnew=Xnew';
-
+        fig_show = figure()
         for l=1:5
             face=reshape(Xnew(l,:),112,92);
-            figure()
-            imshow(face, []);
-            title('Face'+" "+int2str(K))
+            subplot(1,5,l),imshow(face, []);
+            title('Face'+" "+int2str(l))
 
         end
+        saveas(fig_show,'train_reconstruct.fig');
     %%%%%%%%%%%%%%%%%% eigen.%%%%%%%%%%%%%%%%%%
 
 

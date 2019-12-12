@@ -62,11 +62,12 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-I = eye(num_labels);
-Y = zeros(m, num_labels);
+Y = zeros(num_labels, m);
 for i=1:m
-  Y(i, :)= I(y(i), :);
+    disp(y(i));
+    Y(round(y(i)),i)=1;
 end
+Y=Y';
 
 
 
@@ -78,6 +79,8 @@ A3 = sigmoid(Z3);
 H = sigmoid(Z3);
 
 penalty = (lambda/(2*m))*(sum(sum(Theta1(:, 2:end).^2, 2)) + sum(sum(Theta2(:,2:end).^2, 2)));
+disp(size(Y));
+disp(size(H));
 
 J = (1/m)*sum(sum((-Y).*log(H) - (1-Y).*log(1-H), 2));
 J = J + penalty;

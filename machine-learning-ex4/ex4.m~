@@ -21,7 +21,7 @@ clear ; close all; clc
 %% Setup the parameters you will use for this exercise
 input_layer_size  = 10304;  % 20x20 Input Images of Digits
 hidden_layer_size = 25;   % 25 hidden units
-num_labels = 40;          % 10 labels, from 1 to 10   
+num_labels = 35;          % 10 labels, from 1 to 10   
                           % (note that we have mapped "0" to label 10)
 
 %% =========== Part 1: Loading and Visualizing Data =============
@@ -32,9 +32,10 @@ num_labels = 40;          % 10 labels, from 1 to 10
 % Load Training Data
 fprintf('Loading and Visualizing Data ...\n')
 
-X=load('att_faces.mat').faces;
-y=load('att_faces.mat').labels;
+images=load('att_faces.mat').faces;
+% y=load('att_faces.mat').labels;
 m = size(X, 1);
+[X,y] = readyTrainImage(images);
 
 % Randomly select 100 data points to display
 % sel = randperm(size(X, 1));
@@ -227,6 +228,8 @@ pause;
 %  the labels. You will now implement the "predict" function to use the
 %  neural network to predict the labels of the training set. This lets
 %  you compute the training set accuracy.
+m = size(X, 1);
+[X,y] = readyTestImage_with_known_face(images);
 
 pred = predict(Theta1, Theta2, X);
 

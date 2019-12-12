@@ -24,8 +24,8 @@ display_cols = ceil(m / display_rows);
 pad = 1;
 
 % Setup blank display
-display_array = - ones(pad + display_rows * (example_height + pad), ...
-                       pad + display_cols * (example_width + pad));
+display_array = - ones(round(pad + display_rows * (example_height + pad)), ...
+                       round(pad + display_cols * (example_width + pad)));
 
 % Copy each example into a patch on the display array
 curr_ex = 1;
